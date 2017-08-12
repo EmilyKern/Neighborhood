@@ -15,7 +15,6 @@ function initMap() {
 	mapTypeControl: false
 });	
 
-	createMarkersForPlaces(places);
 }
 
 /*
