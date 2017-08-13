@@ -6,16 +6,87 @@ var markers =[];  // Creates a new blank array for all the listing markers.
 // functions to have control over the number of places that show.
 var placeMarkers = [];
 
+var MapApp = function() {
 
-function initMap() {
+var initMap = function() {
 	map = new google.maps.Map(document.getElementById('map'),{
-	center: {lat: 40.7697, lng: -111.894402},
-	zoom: 14,
-	//styles: styles,
-	mapTypeControl: false
-});	
+		center: {lat: 40.7697, lng: -111.894402},
+		zoom: 14,
+		//styles: styles,
+		mapTypeControl: false
+	});	
+	placeMarker();
+	createMarkersForPlaces();
+    showListings();
+	ko.applyBindings(MapApp);
+};
+$(initMap);
+//initMap();
+return {
+	locations: locations
+};
+//method to place marker on the map
+var placeMarker = function() {
+    // Uses the location array to create an array of markers on initialize
+    for (var i = 0; < locations.length; i++) {
+    	// Get position from location array
+    	var position = locations[i].location;
+    	var title = locations[i].title;
+    	// create marker per location then put into markers array
+    	var marker = new google.maps.Marker({
+    		position: position,
+    		title: title,
+    		animation: google.maps.Animation.DROP,
+    		icon: defaultIcon,
+    		id: i
+    	});
+    	
+    	// Push marker to array of markers; Adding marker to marker array
+    	markers.push(marker);
+    	// Create onCLick event to open the large infowindow at each marker
+    	marker.addListener('click', function() {
+    		populateInfoWindow(this, largeInfowindow);
+    	});
+    	// Event listeners: mouseover, mouseout
+    	// change color
+    	marker.addListener('mouseover', function() {
+    		this.setIcon(highlightedIcon);
+    	});
+    	marker.addListener('mouseout', function() {
+    		this.setIcon(defaultIcon);
+    	});
+    }
+};
+document.getElementById('show-listings').addEventListener('click', showListings);
 
-}
+document.getElementById('hide-listings').addEventListener('click', function() {
+          hideMarkers(markers);
+    });
+
+// These are the tourist spots listings that will be shown to the user.
+// Normally we'd have these in a database instead.
+var locations = [
+   {
+   	title: 'Salt Lake Temple', 
+   	location: {lat: 40.770448, lng: -111.891908}
+   },
+   {
+   	title: 'Temple Square', 
+   	location: {lat: 40.769351, lng: -111.894539}
+   },
+   {
+   	title: 'Church History Museum', 
+   	location: {lat: 40.770874, lng: -111.89442}
+   },
+   {
+   	title: 'Church Hisotry Library', 
+   	location: {lat: 40.77208, lng: -111.890406 }
+   },
+   {
+   	title: 'Conference Center', 
+   	location: {lat: 40.772623, lng: -111.892351}
+   }
+ ];
 
 /*
 	// Create a searchbox in order to execute a place search
@@ -33,6 +104,8 @@ function initMap() {
     // mouses over the marker.
     var highlightedIcon = makeMarkerIcon('FFFF24');
 
+//method to place a marker on the map
+var placeMarker = function() {
     // Uses the location array to create an array of markers on initialize
     for (var i = 0; < locations.length; i++) {
     	// Get position from location array
@@ -62,13 +135,9 @@ function initMap() {
     		this.setIcon(defaultIcon);
     	});
     }
+};
 
-    document.getElementById('show-listings').addEventListener('click', showListings);
-
-    document.getElementById('hide-listings').addEventListener('click', function() {
-          hideMarkers(markers);
-    });
-
+    
     // Listen for the event fired when the user selects a prediction from the
     // picklist and retrieve more details for that place.
     searchBox.addListener('places_changed', function() {
@@ -81,22 +150,11 @@ function initMap() {
 
 */
 
-// Model
-
-// These are the tourist spots listings that will be shown to the user.
-// Normally we'd have these in a database instead.
- var locations = [
-   {title: 'Salt Lake Temple', location: {lat: 40.770448, lng: -111.891908}},
-   {title: 'Temple Square', location: {lat: 40.769351, lng: -111.894539}},
-   {title: 'Church History Museum', location: {lat: 40.770874, lng: -111.89442}},
-   {title: 'Church Hisotry Library', location: {lat: 40.77208, lng: -111.890406 }},
-   {title: 'Conference Center', location: {lat: 40.772623, lng: -111.892351}}
- ];
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
-function populateInfoWindow(marker, infowindow) {
+var populateInfoWindow = function(marker, infowindow) {
         // Check to make sure the infowindow is not already opened on this marker.
         if (infowindow.marker != marker) {
           // Clear the infowindow content to give the streetview time to load.
@@ -110,7 +168,7 @@ function populateInfoWindow(marker, infowindow) {
 }
 
 // This function will loop through the markers array and display them all.
-function showListings() {
+var showListings = function() {
 	var bounds = new google.maps.LatLngBounds();
     // Extend the boundaries of the map for each marker and display the marker
     for (var i = 0; i < markers.length; i++) {
@@ -122,7 +180,7 @@ function showListings() {
 
 
 // This function will loop through the listings and hide them all.
-function hideMarkers(markers) {
+var hideMarkers = function(markers) {
 	for (var i = 0; i < markers.length; i++) {
         markers[i].setMap(null);
     }
@@ -130,7 +188,7 @@ function hideMarkers(markers) {
 
 // This function fires when the user selects a searchbox picklist item.
 // It will do a nearby search using the selected query string or place.
-function searchBoxPlaces(searchBox) {
+var searchBoxPlaces = function(searchBox) {
     hideMarkers(placeMarkers);
     var places = searchBox.getPlaces();
     if (places.length == 0) {
@@ -143,7 +201,7 @@ function searchBoxPlaces(searchBox) {
 
 // This function firest when the user select "go" on the places search.
 // It will do a nearby search using the entered query string or place.
-function textSearchPlaces() {
+var textSearchPlaces = function() {
     var bounds = map.getBounds();
     hideMarkers(placeMarkers);
     var placesService = new google.maps.places.PlacesService(map);
@@ -158,7 +216,7 @@ function textSearchPlaces() {
 }
 
 // This function creates markers for each place found in either places search.
-function createMarkersForPlaces(places) {
+var createMarkersForPlaces = function(places) {
   	var bounds = new google.maps.LatLngBounds();
   	for (var i = 0; i < places.length; i++) {
     	var place = places[i];
@@ -202,7 +260,7 @@ function createMarkersForPlaces(places) {
 // This is the PLACE DETAILS search - it's the most detailed so it's only
 // executed when a marker is selected, indicating the user wants more
 // details about that place.
-function getPlacesDetails(marker, infowindow) {
+var getPlacesDetails = function(marker, infowindow) {
 	var service = new google.maps.places.PlacesService(map);
   	service.getDetails({
     	placeId: marker.id
@@ -246,11 +304,35 @@ function getPlacesDetails(marker, infowindow) {
 }
 
 //  View Model
+/*
+var viewModel = {
+locations = ko.observableArray([
+   {title: 'Salt Lake Temple', location: {lat: 40.770448, lng: -111.891908}},
+   {title: 'Temple Square', location: {lat: 40.769351, lng: -111.894539}},
+   {title: 'Church History Museum', location: {lat: 40.770874, lng: -111.89442}},
+   {title: 'Church Hisotry Library', location: {lat: 40.77208, lng: -111.890406 }},
+   {title: 'Conference Center', location: {lat: 40.772623, lng: -111.892351}}
+])
+};
+
+ko.applyBindings(viewModel);
+
+var viewModel = function() {
+locations: ko.observableArray([
+   {title: 'Salt Lake Temple', location: {lat: 40.770448, lng: -111.891908}},
+   {title: 'Temple Square', location: {lat: 40.769351, lng: -111.894539}},
+   {title: 'Church History Museum', location: {lat: 40.770874, lng: -111.89442}},
+   {title: 'Church Hisotry Library', location: {lat: 40.77208, lng: -111.890406 }},
+   {title: 'Conference Center', location: {lat: 40.772623, lng: -111.892351}}
+])};
+
+
+ko.applyBindings(viewModel);
+*/
 
 var ViewModel = function() {
 	this.locations=locations;
-}
-
-ko.applyBindings(new ViewModel());
+};
+}(); // MapApp()
 
 //#sourceUrl=hoodknockout.js
