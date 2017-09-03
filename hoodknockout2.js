@@ -88,10 +88,17 @@ var Location = function(data) {
 
   for (var i = 0; i < markers.length; i++) {
   var marker = markers[i];
+  
   google.maps.event.addListener(marker, 'click', function () {
   // where I have added .html to the marker object.
-  infowindow.setContent(this.html);
-  infowindow.open(map, this);
+  //infowindow.setContent(this.html);
+  //infowindow.open(map, this);
+  infowindow.open(map, markers[i]);
+  // Put this in so that this small window closes if the user clicks
+  // the marker, when the big infowindow opens
+    markers[i].infowindow = infowindow;
+    google.maps.event.addListener(markers[i], 'click', function() {
+        this.infowindow.close();
   });
   };
 
