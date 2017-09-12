@@ -108,7 +108,8 @@ var ViewModel = function() {
   // add the list view items' click event handler method there
   // use the 'current item' aka first parameter to activate the corresponding map marker
   // http://knockoutjs.com/documentation/click-binding.html#note-1-passing-a-current-item-as-a-parameter-to-your-handler-function
-  //function MyViewModel() {
+  /*
+  function MyViewModel() {
     var self = this;
       self.locations = ko.observableArray();
  
@@ -116,8 +117,9 @@ var ViewModel = function() {
       self.removePlace = function(place) {
         self.places.remove(place)
         }
-  //}
-  //ko.applyBindings(new MyViewModel());
+  }
+  ko.applyBindings(new MyViewModel());
+  */
 };
 
 
