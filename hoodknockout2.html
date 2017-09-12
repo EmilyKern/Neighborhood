@@ -17,6 +17,10 @@
     				</li>
 				</ul>
 				<!-- http://knockoutjs.com/documentation/binding-context.html -->
+				<ul data-bind="foreach: title">
+    				<li>The value is <span data-bind="text: $data"></span></li>
+				</ul>
+
 				<p  data-bind="text: title"> </p>
 			</div>
 		</div>
