@@ -8,7 +8,15 @@
 	<div class="container">
 		<div id="options-box">
 			<h1>Salt Lake City Tourist Spots</h1>
-			<div data-bind="foreach: locations">
+			<div data-bind="foreach: locations"> 
+
+			<!-- <ul data-bind="foreach: locations">
+    			<li>
+        		<span data-bind="text: $data"></span>
+        		<button data-bind="click: $parent.removePlace">Remove</button>
+    			</li>
+			</ul>
+				<p  data-bind="text: title, click: handleClick"> </p> -->
 				<p  data-bind="text: title"> </p>
 			</div>
 		</div>
@@ -19,13 +27,13 @@
 		</div> -->
 	</div>
 	<!-- <div style="height:800px;width:800px;" id="map"> </ div> -->
-	
+
 	<div id="map"></div>
 
-	<script src="JSLibrary/jquery.js"></script>
-	
+	<script src="jquery.js"></script>
+
 	<script src="knockout.js"></script>
-	<script src="hoodknockout.js"></script>
+	<script src="hoodknockout4.js"></script>
 
 	<script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyBnsWHfIV-I0IPAB6k9JgdHX84h7fBjWCo&v=3&callback=initMap"></script>
 

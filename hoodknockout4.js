@@ -7,6 +7,7 @@ var markers = []; // Creates a new blank array for all the listing markers.
 var placeMarkers = [];
 
 var vm;
+var marker;
 
 // Model
 
@@ -82,10 +83,46 @@ var Location = function(data) {
         map: map,
         position: data.location,
         title: data.title,
-        animation: google.maps.Animation.DROP
+        animation: google.maps.Animation.DROP,
+        //icon: defaultIcon
     });
 
-    self.wikiText = "loading";
+    /* 
+    // Push the marker to array of markers
+    markers.push(self.marker);
+    // Create an onclick event to open the large infowindow at each marker.
+    self.marker.addListener('click', function() {
+        populateInfoWindow(self, infowindow);
+    });
+
+    // This function takes in a COLOR, and then creates a new marker
+    // icon of that color. The icon will be 21 px wide by 34 high, have an origin
+    // of 0, 0 and be anchored at 10, 34).
+    function makeMarkerIcon(markerColor) {
+        var markerImage = new google.maps.MarkerImage(
+          'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
+          '|40|_|%E2%80%A2',
+          new google.maps.Size(21, 34),
+          new google.maps.Point(0, 0),
+          new google.maps.Point(10, 34),
+          new google.maps.Size(21,34));
+        return markerImage;
+    }
+
+    // Style the markers a bit. This will be our listing marker icon.
+    var defaultIcon = makeMarkerIcon('0091ff');
+
+    // Create a "highlighted location" marker color for when the user
+    // mouses over the marker.
+    var highlightedIcon = makeMarkerIcon('FFFF24');
+    // Two event listeners - one for mouseover, one for mouseout,
+    // to change the colors back and forth.
+    self.marker.addListener('mouseover', function() {
+        this.setIcon(highlightedIcon);
+    });
+    self.marker.addListener('mouseout', function() {
+        this.setIcon(defaultIcon);
+    });
 
     // create an event listener for the newly created marker.
     // the function will run when the marker is clicked
@@ -96,11 +133,12 @@ var Location = function(data) {
       // open the infowinow object at the position of the marker
       infoWindow.open(map, self.marker);
     });
+    */
 
     // TODO:
     // 1) call the wikipedia API using $.ajax()
     
-    /*// Wikipedia code AJAX request
+    /* // Wikipedia code AJAX request
     var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + self.title + '&format=json&callback=wikiCallback';
     var wikiRequestTimeout = setTimeout(function() {
         ViewModel.wikiError("failed to get Wikipedia resources");
@@ -126,6 +164,8 @@ var Location = function(data) {
     }
     self.wikiText = url; */
 
+    self.wikiText = data.title;
+
 };
 
 // View Model
@@ -143,7 +183,14 @@ var ViewModel = function() {
     for (var i = 0; i < locations.length; i++) {
         this.locations.push(new Location(locations[i]));
     }
+
+    // add the list view items' click event handler method there
+
+    
+  // use the 'current item' aka first parameter to activate the corresponding map marker
+  // http://knockoutjs.com/documentation/click-binding.html#note-1-passing-a-current-item-as-a-parameter-to-your-handler-function
+
 };
 
 
-            //#sourceUrl=hoodknockout2.js
+            //#sourceUrl=hoodknockout4.js

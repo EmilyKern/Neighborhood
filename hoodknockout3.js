@@ -12,6 +12,7 @@ var vm;
 
 // These are the tourist spots listings that will be shown to the user.
 // Normally we'd have these in a database instead.
+// locations is an array 
 var locations = [{
     title: 'Salt Lake Temple',
     location: {
@@ -144,36 +145,33 @@ var ViewModel = function() {
 
   // add the list view items' click event handler method there
 
-          // Create an onclick event to open the large infowindow at each marker.
-          marker.addListener('click', function() {
-            populateInfoWindow(this, infowindow);
-          });
-          // Style the markers a bit. This will be our listing marker icon.
-        var defaultIcon = makeMarkerIcon('0091ff');
+  // Create an onclick event to open the large infowindow at each marker.
+  marker.addListener('click', function() {
+    populateInfoWindow(this, infowindow);
+  });
+  // Style the markers a bit. This will be our listing marker icon.
+  var defaultIcon = makeMarkerIcon('0091ff');
 
-        // Create a "highlighted location" marker color for when the user
-        // mouses over the marker.
-        var highlightedIcon = makeMarkerIcon('FFFF24');
-          // Two event listeners - one for mouseover, one for mouseout,
-          // to change the colors back and forth.
-          marker.addListener('mouseover', function() {
-            this.setIcon(highlightedIcon);
-          });
-          marker.addListener('mouseout', function() {
-            this.setIcon(defaultIcon);
-          });
-// Listen for the event fired when the user selects a prediction from the
-        // picklist and retrieve more details for that place.
-        searchBox.addListener('places_changed', function() {
-          searchBoxPlaces(this);
-        });
+  // Create a "highlighted location" marker color for when the user
+  // mouses over the marker.
+  var highlightedIcon = makeMarkerIcon('FFFF24');
+  // Two event listeners - one for mouseover, one for mouseout,
+  // to change the colors back and forth.
+  marker.addListener('mouseover', function() {
+    this.setIcon(highlightedIcon);
+  });
+  marker.addListener('mouseout', function() {
+    this.setIcon(defaultIcon);
+  });
+ // Listen for the event fired when the user selects a prediction from the
+ // picklist and retrieve more details for that place.
+ searchBox.addListener('places_changed', function() {
+   searchBoxPlaces(this);
+ });
 
-        // Listen for the event fired when the user selects a prediction and clicks
-        // "go" more details for that place.
-        document.getElementById('go-places').addEventListener('click', textSearchPlaces);
-
-
-
+ // Listen for the event fired when the user selects a prediction and clicks
+ // "go" more details for that place.
+ document.getElementById('go-places').addEventListener('click', textSearchPlaces);
 
 
   // use the 'current item' aka first parameter to activate the corresponding map marker
