@@ -70,10 +70,19 @@ function initMap() {
   ko.applyBindings(vm);
 };
 
+function makeMarkerIcon(markerColor) {
+  var markerImage = new google.maps.MarkerImage(
+    'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|' + markerColor +
+    '|40|_|%E2%80%A2',
+    new google.maps.Size(21, 34),
+    new google.maps.Point(0, 0),
+    new google.maps.Point(10, 34),
+    new google.maps.Size(21, 34));
+  return markerImage;
+}
 
-//  View Model
-
-var Location = function(data) {
+//  Location Constructor
+var TouristSpot = function(data) {
 
   this.title = data.title;
 
@@ -81,46 +90,50 @@ var Location = function(data) {
     map: map,
     position: data.location,
     title: data.title,
-    animation: google.maps.Animation.DROP  
+    animation: google.maps.Animation.DROP
   });
 
-  // from: http://you.arenot.me/2010/06/29/google-maps-api-v3-0-multiple-markers-multiple-infowindows/
-  
-  /* now inside your initialise function */
- 
-    google.maps.event.addListener(this.marker, 'click', function () {
+  google.maps.event.addListener(this.marker, 'click', function() {
     // where I have added .html to the marker object.
-      infowindow.setContent(this.title);
-      infowindow.open(map, this);
-    });
+    infowindow.setContent(this.title);
+    infowindow.open(map, this);
+  });
 
+  // Style the markers a bit. This will be our listing marker icon.
+  var defaultIcon = makeMarkerIcon('0091ff');
+
+  // Create a "highlighted location" marker color for when the user
+  // mouses over the marker.
+  var highlightedIcon = makeMarkerIcon('FFFF24');
+  // Two event listeners - one for mouseover, one for mouseout,
+  // to change the colors back and forth.
+  this.marker.addListener('mouseover', function() {
+    this.setIcon(highlightedIcon);
+  });
+
+  this.marker.addListener('mouseout', function() {
+    this.setIcon(defaultIcon);
+  });
 };
 
 var ViewModel = function() {
-  //this.locations = ko.observableArray(locations);
 
-  this.locations = ko.observableArray();
+  var self = this;
+
+  this.touristSpots = ko.observableArray();
 
   for (var i = 0; i < locations.length; i++) {
-    this.locations.push(new Location(locations[i])); 
+    this.touristSpots.push(new TouristSpot(locations[i]));
   }
 
   // add the list view items' click event handler method there
   // use the 'current item' aka first parameter to activate the corresponding map marker
   // http://knockoutjs.com/documentation/click-binding.html#note-1-passing-a-current-item-as-a-parameter-to-your-handler-function
-  /*
-  function MyViewModel() {
-    var self = this;
-      self.locations = ko.observableArray();
- 
-      // The current item will be passed as the first parameter, so we know which place to remove
-      self.removePlace = function(place) {
-        self.places.remove(place)
-        }
-  }
-  ko.applyBindings(new MyViewModel());
-  */
+
+  this.doSomeThingWithMarker = function(attraction) {
+    console.log(attraction);
+    console.log(attraction.marker);
+    // do something with attraction.marker here, for example, open the marker's infowindow
+  };
+
 };
-
-
-//#sourceUrl=hoodknockout2.js
