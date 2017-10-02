@@ -133,7 +133,58 @@ var ViewModel = function() {
   this.doSomeThingWithMarker = function(attraction) {
     console.log(attraction);
     console.log(attraction.marker);
+    function populateInfoWindow(attraction.marker, infowindow) {
+      if(infowindow.marker != attraction.marker) {
+        infowindow.setContent('');
+        infowindow.marker = attraction.marker;
+        infowindow.addListener('closeclick',function() {
+          infowindow.marker = null;
+        });
+      }
+      var streetViewService = new google.maps.StreetViewService();
+      var radius = 50;
+      function getStreetView(data, status) {
+        if (status == google.maps.StreetViewService.OK) {
+          var nearStreetViewLocation = data.location.latLng;
+          var heading = google.maps.geometry.spherical.computeHeading(
+            nearStreetViewLocation, data.location);
+            infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
+            var panoramaOptions = {
+              position: nearStreetViewLocation,
+              pov: {
+                heading: heading,
+                pitch: 30
+              }
+            };
+            var panorama = new google.maps.StreetViewPanorama(
+              document.getElementById('pano'), panoramaOptions);
+            else {
+              infowindow.setContent('<div>' + marker.title + '</div>' +
+                '<div>No Street View Found</div>');
+            }
+          }
+        }
+      }
+    }
     // do something with attraction.marker here, for example, open the marker's infowindow
+  
+    // Wikipedia AJAX request
+    // Reference: https://classroom.udacity.com/nanodegrees/nd004/parts/
+    //              135b6edc-f1cd-4cd9-b831-1908ede75737/modules/
+    //              271165859175460/lessons/3310298553/concepts/31621285890923
+    /*var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + this.title + '&format=json&callback=wikiCallback';
+    $.ajax({
+      url: wikiUrl,
+      dataType: "jsonp",
+      success: function(response) {
+        var articleList = response[1];
+          for(var i = 0; i < articleList.length; i++) {
+            var articleStr = articleList[i];
+            var url = 'http://en.wikipedia.org/wiki/' + articleStr;
+            $wikiElem.append('<li><a href="' + url + '">' + articleStr + '</a></li>');
+          };
+        }
+      });
+    };*/
   };
-
 };
