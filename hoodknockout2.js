@@ -12,37 +12,43 @@ var vm;
 
 // These are the tourist spots listings that will be shown to the user.
 // Normally we'd have these in a database instead.
-var locations = [{
+var locations = [
+  {
     title: 'Salt Lake Temple',
-    location: {
+    location: 
+    {
       lat: 40.770448,
       lng: -111.891908
     }
   },
   {
     title: 'Temple Square',
-    location: {
+    location: 
+    {
       lat: 40.769351,
       lng: -111.894539
     }
   },
   {
     title: 'Church History Museum',
-    location: {
+    location: 
+    {
       lat: 40.770874,
       lng: -111.89442
     }
   },
   {
     title: 'Church History Library',
-    location: {
+    location: 
+    {
       lat: 40.77208,
       lng: -111.890406
     }
   },
   {
     title: 'Conference Center',
-    location: {
+    location: 
+    {
       lat: 40.772623,
       lng: -111.892351
     }
@@ -133,6 +139,10 @@ var ViewModel = function() {
   this.doSomeThingWithMarker = function(attraction) {
     console.log(attraction);
     console.log(attraction.marker);
+
+    self.touristSpots(attraction);
+
+    /*
     function populateInfoWindow(attraction.marker, infowindow) {
       if(infowindow.marker != attraction.marker) {
         infowindow.setContent('');
@@ -141,38 +151,14 @@ var ViewModel = function() {
           infowindow.marker = null;
         });
       }
-      var streetViewService = new google.maps.StreetViewService();
-      var radius = 50;
-      function getStreetView(data, status) {
-        if (status == google.maps.StreetViewService.OK) {
-          var nearStreetViewLocation = data.location.latLng;
-          var heading = google.maps.geometry.spherical.computeHeading(
-            nearStreetViewLocation, data.location);
-            infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
-            var panoramaOptions = {
-              position: nearStreetViewLocation,
-              pov: {
-                heading: heading,
-                pitch: 30
-              }
-            };
-            var panorama = new google.maps.StreetViewPanorama(
-              document.getElementById('pano'), panoramaOptions);
-            else {
-              infowindow.setContent('<div>' + marker.title + '</div>' +
-                '<div>No Street View Found</div>');
-            }
-          }
-        }
-      }
     }
+    */
     // do something with attraction.marker here, for example, open the marker's infowindow
   
     // Wikipedia AJAX request
-    // Reference: https://classroom.udacity.com/nanodegrees/nd004/parts/
-    //              135b6edc-f1cd-4cd9-b831-1908ede75737/modules/
-    //              271165859175460/lessons/3310298553/concepts/31621285890923
-    /*var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + this.title + '&format=json&callback=wikiCallback';
+    // Reference: https://classroom.udacity.com/nanodegrees/nd004/parts/135b6edc-f1cd-4cd9-b831-1908ede75737/modules/271165859175460/lessons/3310298553/concepts/31621285890923
+    /*
+    var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + this.title + '&format=json&callback=wikiCallback';
     $.ajax({
       url: wikiUrl,
       dataType: "jsonp",
@@ -185,6 +171,7 @@ var ViewModel = function() {
           };
         }
       });
-    };*/
+    };
+    */
   };
 };

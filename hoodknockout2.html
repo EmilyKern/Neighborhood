@@ -9,13 +9,16 @@
 <body>
   <div class="container">
     <div id="options-box">
-      <h1>Salt Lake City Tourist Spots</h1>
+      <h2>Salt Lake City Tourist Spots</h2>
       <ul data-bind="foreach: touristSpots">
-        <li data-bind="text: title, click: $root.doSomeThingWithMarker"></li>
+        <li><button data-bind="text: title, click: $root.doSomeThingWithMarker"></button></li>
       </ul>
-
+      <div id="touristSpots" data-bind="with: doSomeThingWithMarker">
+        <div>
+          <h2 data-bind="text:name"></h2>
+        </div>
+      </div>
     </div>
-    
   </div>
   <div id="map"></div>
 
