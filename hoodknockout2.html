@@ -11,9 +11,9 @@
     <div id="options-box">
       <h2>Salt Lake City Tourist Spots</h2>
       <ul data-bind="foreach: touristSpots">
-        <li><button data-bind="text: title, click: $root.doSomeThingWithMarker"></button></li>
+        <li><button data-bind="text: title, click: $root.placesList"></button></li>
       </ul>
-      <div id="touristSpots" data-bind="with: doSomeThingWithMarker">
+      <div id="touristSpots" data-bind="with: placesList">
         <div>
           <h2 data-bind="text:name"></h2>
         </div>

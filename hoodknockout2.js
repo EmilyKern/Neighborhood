@@ -136,25 +136,14 @@ var ViewModel = function() {
   // use the 'current item' aka first parameter to activate the corresponding map marker
   // http://knockoutjs.com/documentation/click-binding.html#note-1-passing-a-current-item-as-a-parameter-to-your-handler-function
 
-  this.doSomeThingWithMarker = function(attraction) {
+  this.placesList = function(attraction) {
     console.log(attraction);
     console.log(attraction.marker);
-
-    self.touristSpots(attraction);
-
-    /*
-    function populateInfoWindow(attraction.marker, infowindow) {
-      if(infowindow.marker != attraction.marker) {
-        infowindow.setContent('');
-        infowindow.marker = attraction.marker;
-        infowindow.addListener('closeclick',function() {
-          infowindow.marker = null;
-        });
-      }
-    }
-    */
+    google.maps.event.trigger(attraction.marker, 'click');
+      
     // do something with attraction.marker here, for example, open the marker's infowindow
   
+
     // Wikipedia AJAX request
     // Reference: https://classroom.udacity.com/nanodegrees/nd004/parts/135b6edc-f1cd-4cd9-b831-1908ede75737/modules/271165859175460/lessons/3310298553/concepts/31621285890923
     /*
