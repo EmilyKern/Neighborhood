@@ -46,7 +46,7 @@ var locations = [
     }
   },
   {
-    title: 'Conference Center',
+    title: 'LDS Conference Center',
     location: 
     {
       lat: 40.772623,
@@ -96,7 +96,8 @@ var TouristSpot = function(data) {
     map: map,
     position: data.location,
     title: data.title,
-    animation: google.maps.Animation.DROP
+    animation: google.maps.Animation.DROP,
+    id: data.place_id,
   });
 
   google.maps.event.addListener(this.marker, 'click', function() {
@@ -127,6 +128,7 @@ var ViewModel = function() {
   var self = this;
 
   this.touristSpots = ko.observableArray();
+  this.wikiData = ko.observable('');
 
   for (var i = 0; i < locations.length; i++) {
     this.touristSpots.push(new TouristSpot(locations[i]));
@@ -140,27 +142,72 @@ var ViewModel = function() {
     console.log(attraction);
     console.log(attraction.marker);
     google.maps.event.trigger(attraction.marker, 'click');
-      
+    getData(attraction.marker);
+    getPlacesDetails(attraction.marker);
     // do something with attraction.marker here, for example, open the marker's infowindow
-  
+  };
+};
 
-    // Wikipedia AJAX request
-    // Reference: https://classroom.udacity.com/nanodegrees/nd004/parts/135b6edc-f1cd-4cd9-b831-1908ede75737/modules/271165859175460/lessons/3310298553/concepts/31621285890923
-    /*
-    var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + this.title + '&format=json&callback=wikiCallback';
+function getData(data) {
+    
+    var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + data.title + '&format=json&callback=wikiCallback';  
+    //var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + "Church History Museum" + '&format=json&callback=wikiCallback';    
     $.ajax({
       url: wikiUrl,
       dataType: "jsonp",
       success: function(response) {
-        var articleList = response[1];
-          for(var i = 0; i < articleList.length; i++) {
-            var articleStr = articleList[i];
-            var url = 'http://en.wikipedia.org/wiki/' + articleStr;
-            $wikiElem.append('<li><a href="' + url + '">' + articleStr + '</a></li>');
-          };
-        }
+        console.log(response)
+        //console.log(response[2][0])
+        var description = response[2][0];
+        var contentString = '<p class="description">' + description + '</p>';
+        vm.wikiData(contentString);
+      }
+    });
+}
+
+// This is the PLACE DETAILS search - it's the most detailed so it's only
+// executed when a marker is selected, indicating the user wants more
+// details about that place.
+function getPlacesDetails(marker, infowindow) {
+  var service = new google.maps.places.PlacesService(map);
+  service.getDetails({
+    placeId: marker.id
+  }, function(place, status) {
+    if (status === google.maps.places.PlacesServiceStatus.OK) {
+      // Set the marker property on this infowindow so it isn't created again.
+      infowindow.marker = marker;
+      var innerHTML = '<div>';
+      if (place.name) {
+        innerHTML += '<strong>' + place.name + '</strong>';
+      }
+      if (place.formatted_address) {
+        innerHTML += '<br>' + place.formatted_address;
+      }
+      if (place.formatted_phone_number) {
+        innerHTML += '<br>' + place.formatted_phone_number;
+      }
+      if (place.opening_hours) {
+        innerHTML += '<br><br><strong>Hours:</strong><br>' +
+            place.opening_hours.weekday_text[0] + '<br>' +
+            place.opening_hours.weekday_text[1] + '<br>' +
+            place.opening_hours.weekday_text[2] + '<br>' +
+            place.opening_hours.weekday_text[3] + '<br>' +
+            place.opening_hours.weekday_text[4] + '<br>' +
+            place.opening_hours.weekday_text[5] + '<br>' +
+            place.opening_hours.weekday_text[6];
+      }
+      if (place.photos) {
+        innerHTML += '<br><br><img src="' + place.photos[0].getUrl(
+            {maxHeight: 100, maxWidth: 200}) + '">';
+      }
+      innerHTML += '</div>';
+      infowindow.setContent(innerHTML);
+      infowindow.open(map, marker);
+      // Make sure the marker property is cleared if the infowindow is closed.
+      infowindow.addListener('closeclick', function() {
+        infowindow.marker = null;
       });
-    };
-    */
-  };
-};
+    }
+  });
+}
+

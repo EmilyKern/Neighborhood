@@ -2,6 +2,7 @@
 <html>
 
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="hoodknockout.css">
   <title>SLC Tourist Spots</title>
 </head>
@@ -13,12 +14,9 @@
       <ul data-bind="foreach: touristSpots">
         <li><button data-bind="text: title, click: $root.placesList"></button></li>
       </ul>
-      <div id="touristSpots" data-bind="with: placesList">
-        <div>
-          <h2 data-bind="text:name"></h2>
-        </div>
-      </div>
     </div>
+    <div data-bind="html: wikiData"></div>
+      
   </div>
   <div id="map"></div>
 
