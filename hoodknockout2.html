@@ -10,14 +10,22 @@
 <body>
   <div class="container">
     <div id="options-box">
-      <h2>Salt Lake City Tourist Spots</h2>
+      <div class="wikicontainer">
+        <h2>Salt Lake City Tourist Spots</h2>
+      </div>
       <ul data-bind="foreach: touristSpots">
         <li><button data-bind="text: title, click: $root.placesList"></button></li>
       </ul>
     </div>
-    <div data-bind="html: wikiData"></div>
-      
+    <div class="wikicontainer", data-bind="html: wikiData"></div>
   </div>
+    <!--
+    <div>
+      <span class="text">Search for nearby places</span>
+      <input id="places-search" type="text" placeholder="Ex: Pizza delivery in NYC">
+      <input id="go-places" type="button" value="Go">
+    </div>
+    -->
   <div id="map"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -25,8 +33,10 @@
   <script src="hoodknockout2.js"></script>
 
   <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyBnsWHfIV-I0IPAB6k9JgdHX84h7fBjWCo&v=3&callback=initMap"></script>
+  
 
 
 </body>
 
 </html>
+
