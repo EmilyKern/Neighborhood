@@ -14,6 +14,7 @@ var vm;
 // Normally we'd have these in a database instead.
 var locations = [{
         title: 'Salt Lake Temple',
+        placeId: 'ChIJqTIfcAj1UocRVHnhNYcscio',
         location: {
             lat: 40.770448,
             lng: -111.891908
@@ -21,6 +22,7 @@ var locations = [{
     },
     {
         title: 'Temple Square',
+        placeId: 'ChIJdRMqtQf1UocRwPPJ_lV5i7w',
         location: {
             lat: 40.769351,
             lng: -111.894539
@@ -28,6 +30,7 @@ var locations = [{
     },
     {
         title: 'Church History Museum',
+        placeId: 'ChIJOYAsxwf1UocR9gZqf4IFV1k',
         location: {
             lat: 40.770874,
             lng: -111.89442
@@ -35,6 +38,7 @@ var locations = [{
     },
     {
         title: 'Church History Library',
+        placeId: 'ChIJc7GXOgj1UocRm4_VAuIb8xA',
         location: {
             lat: 40.77208,
             lng: -111.890406
@@ -42,6 +46,7 @@ var locations = [{
     },
     {
         title: 'LDS Conference Center',
+        placeId: 'ChIJOcRQ_Kf1UocRR_64Qy1RXUo',
         location: {
             lat: 40.772623,
             lng: -111.892351
@@ -83,8 +88,11 @@ function makeMarkerIcon(markerColor) {
 
 //  Location Constructor
 var TouristSpot = function(data) {
+    console.log(data);
 
     this.title = data.title;
+
+    this.placeId = data.placeId;
 
     this.marker = new google.maps.Marker({
         map: map,
@@ -94,10 +102,13 @@ var TouristSpot = function(data) {
         id: data.place_id,
     });
 
-    google.maps.event.addListener(this.marker, 'click', function() {
+    var placeId = this.placeId;
+    var marker = this.marker;
+    google.maps.event.addListener(this.marker, 'click', function(event) {
         // where I have added .html to the marker object.
-        infowindow.setContent(this.title);
-        infowindow.open(map, this);
+        console.log(placeId);
+        getPlacesDetails(marker, infowindow, placeId);
+        getData(data);
     });
 
     // Style the markers a bit. This will be our listing marker icon.
@@ -162,10 +173,11 @@ function getData(data) {
 // This is the PLACE DETAILS search - it's the most detailed so it's only
 // executed when a marker is selected, indicating the user wants more
 // details about that place.
-function getPlacesDetails(marker, infowindow) {
+function getPlacesDetails(marker, infowindow, placeId) {
+    console.log(placeId);
     var service = new google.maps.places.PlacesService(map);
     service.getDetails({
-        placeId: marker.id
+        placeId: placeId
     }, function(place, status) {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
             // Set the marker property on this infowindow so it isn't created again.
