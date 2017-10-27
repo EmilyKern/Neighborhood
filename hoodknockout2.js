@@ -62,7 +62,6 @@ function initMap() {
             lng: -111.894402
         },
         zoom: 16,
-        //styles: styles,
         mapTypeControl: false
     });
 
@@ -148,15 +147,16 @@ var ViewModel = function() {
         console.log(attraction.marker);
         google.maps.event.trigger(attraction.marker, 'click');
         getData(attraction.marker);
-        //getPlacesDetails(attraction.marker);
-        // do something with attraction.marker here, for example, open the marker's infowindow
+        
     };
+    initAutocomplete();
+    
 };
 
+// Wikipedia API
 function getData(data) {
 
-    var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + data.title + '&format=json&callback=wikiCallback';
-    //var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + "Church History Museum" + '&format=json&callback=wikiCallback';    
+    var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + data.title + '&format=json&callback=wikiCallback';   
     $.ajax({
         url: wikiUrl,
         dataType: "jsonp",
@@ -220,11 +220,118 @@ function getPlacesDetails(marker, infowindow, placeId) {
 }
 
 // Search/Filter
+// ref:  https://developers.google.com/maps/documentation/javascript/examples/places-searchbox
+
+function initAutocomplete() {
+        
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 40.7697, lng: -111.894402},
+          zoom: 16,
+          mapTypeId: 'roadmap'
+        });
+        
+        // Create the search box and link it to the UI element.
+        var input = document.getElementById('searchInput');
+        var searchBox = new google.maps.places.SearchBox(input);
+        //map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+        // Bias the SearchBox results towards current map's viewport.
+        map.addListener('bounds_changed', function() {
+          searchBox.setBounds(map.getBounds());
+        });
+
+        var markers = [];
+        // Listen for the event fired when the user selects a prediction and retrieve
+        // more details for that place.
+        searchBox.addListener('places_changed', function() {
+          var places = searchBox.getPlaces();
+
+          if (places.length == 0) {
+            return;
+          }
+
+          // Clear out the old markers.
+          markers.forEach(function(marker) {
+            marker.setMap(null);
+          });
+          markers = [];
+
+          // For each place, get the icon, name and location.
+          var bounds = new google.maps.LatLngBounds();
+          places.forEach(function(place) {
+            if (!place.geometry) {
+              console.log("Returned place contains no geometry");
+              return;
+            }
+            
+            //makeMarkerIcon(markerColor);
+            
+            var icon = {
+              url: place.icon,
+              size: new google.maps.Size(71, 71),
+              origin: new google.maps.Point(0, 0),
+              anchor: new google.maps.Point(17, 34),
+              scaledSize: new google.maps.Size(25, 25)
+            };
+            
+
+            // Create a marker for each place.
+            markers.push(new google.maps.Marker({
+              map: map,
+              icon: icon,
+              title: place.name,
+              position: place.geometry.location
+            }));
+
+            if (place.geometry.viewport) {
+              // Only geocodes have viewport.
+              bounds.union(place.geometry.viewport);
+            } else {
+              bounds.extend(place.geometry.location);
+            }
+          });
+          map.fitBounds(bounds);
+        });
+      }
+
 /*
+// This autocomplete is for use in the search within time entry box.
+var timeAutocomplete = new google.maps.places.Autocomplete(
+    document.getElementById('search-within-time-text'));
+// This autocomplete is for use in the geocoder entry box.
+var zoomAutocomplete = new google.maps.places.Autocomplete(
+    document.getElementById('zoom-to-area-text'));
+// Bias the boundaries within the map for the zoom to area text.
+zoomAutocomplete.bindTo('bounds', map);
+// Create a searchbox in order to execute a places search
+var searchBox = new google.maps.places.SearchBox(
+    document.getElementById('places-search'));
+// Bias the searchbox to within the bounds of the map.
+searchBox.setBounds(map.getBounds());
+
+
+document.getElementById('zoom-to-area').addEventListener('click', function() {
+  zoomToArea();
+});
+
+document.getElementById('search-within-time').addEventListener('click', function() {
+  searchWithinTime();
+});
+
+// Listen for the event fired when the user selects a prediction from the
+// picklist and retrieve more details for that place.
+searchBox.addListener('places_changed', function() {
+  searchBoxPlaces(searchBox);
+});
+
+// Listen for the event fired when the user selects a prediction and clicks
+// "go" more details for that place.
+document.getElementById('go-places').addEventListener('click', textSearchPlaces);
+
 // This function fires when the user selects a searchbox picklist item.
 // It will do a nearby search using the selected query string or place.
 function searchBoxPlaces(searchBox) {
-    hideMarkers(placeMarkers);
+    hideMarkers(markers);
     var places = searchBox.getPlaces();
     if (places.length == 0) {
         window.alert('We did not find any places matching that search!');
@@ -238,7 +345,7 @@ function searchBoxPlaces(searchBox) {
 // It will do a nearby search using the entered query string or place.
 function textSearchPlaces() {
     var bounds = map.getBounds();
-    hideMarkers(placeMarkers);
+    hideMarkers(markers);
     var placesService = new google.maps.places.PlacesService(map);
     placesService.textSearch({
         query: document.getElementById('places-search').value,
@@ -290,5 +397,12 @@ function createMarkersForPlaces(places) {
         }
     }
     map.fitBounds(bounds);
+}
+
+// This function will loop through the listings and hide them all.
+function hideMarkers(markers) {
+    for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+    }
 }
 */
