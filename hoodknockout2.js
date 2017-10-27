@@ -147,10 +147,11 @@ var ViewModel = function() {
         console.log(attraction.marker);
         google.maps.event.trigger(attraction.marker, 'click');
         getData(attraction.marker);
-        
+        //test run for search using Autocomplete
+        initAutocomplete();
     };
-    initAutocomplete();
-    
+   
+
 };
 
 // Wikipedia API
