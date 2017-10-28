@@ -251,7 +251,7 @@ function initAutocomplete() {
     searchBox.addListener('places_changed', function() {
         var places = searchBox.getPlaces();
 
-        if (places.length == 0) {
+        if (places.length === 0) {
             return;
         }
 
