@@ -70,7 +70,6 @@ function initMap() {
     });
 
     vm = new ViewModel();
-    initAutocomplete();
 
     ko.applyBindings(vm);
 }
@@ -134,6 +133,8 @@ var ViewModel = function() {
 
     this.touristSpots = ko.observableArray();
     this.wikiData = ko.observable('');
+    
+    this.query = ko.observable('');
 
     for (var i = 0; i < locations.length; i++) {
         this.touristSpots.push(new TouristSpot(locations[i]));
@@ -148,11 +149,38 @@ var ViewModel = function() {
         console.log(attraction.marker);
         google.maps.event.trigger(attraction.marker, 'click');
         getData(attraction.marker);
-        //test run for search using Autocomplete
-        //initAutocomplete();
     };
 
+    // Filtering/Search
+    this.search = function(value) {
+        // remove all the current touristSpots, which removes them from the view
+        this.touristSpots.removeAll();
 
+        for(var x in ) {
+        if(beers[x].name.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+            viewModel.beers.push(beers[x]);
+        }
+        }
+    };
+};
+
+viewModel.query.subscribe(viewModel.search);
+
+
+    /*
+    // Reference: http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
+    //filter the items using the filter text
+    this.filteredItems = ko.computed(function() {
+        var filter = this.filter().toLowerCase();
+            if (!filter) {
+            return this.items();
+        } else {
+            return ko.utils.arrayFilter(this.items(), function(item) {
+                return ko.utils.stringStartsWith(item.name().toLowerCase(), filter);
+            });
+        }
+    }, this);
+    */
 };
 
 // Wikipedia API
@@ -221,81 +249,3 @@ function getPlacesDetails(marker, infowindow, placeId) {
     });
 }
 
-// Search/Filter
-// ref:  https://developers.google.com/maps/documentation/javascript/examples/places-searchbox
-
-function initAutocomplete() {
-/*
-    var map = new google.maps.Map(document.getElementById('map'), {
-        center: {
-            lat: 40.7697,
-            lng: -111.894402
-        },
-        zoom: 16,
-        mapTypeId: 'roadmap'
-    });
-*/
-    // Create the search box and link it to the UI element.
-    var input = document.getElementById('searchInput');
-    var searchBox = new google.maps.places.SearchBox(input);
-    //map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-    // Bias the SearchBox results towards current map's viewport.
-    map.addListener('bounds_changed', function() {
-        searchBox.setBounds(map.getBounds());
-    });
-
-    var markers = [];
-    // Listen for the event fired when the user selects a prediction and retrieve
-    // more details for that place.
-    searchBox.addListener('places_changed', function() {
-        var places = searchBox.getPlaces();
-
-        if (places.length === 0) {
-            return;
-        }
-
-        // Clear out the old markers.
-        markers.forEach(function(marker) {
-            marker.setMap(null);
-        });
-        markers = [];
-
-        // For each place, get the icon, name and location.
-        var bounds = new google.maps.LatLngBounds();
-        places.forEach(function(place) {
-            if (!place.geometry) {
-                console.log("Returned place contains no geometry");
-                return;
-            }
-
-            //makeMarkerIcon(markerColor);
-
-            var icon = {
-                url: place.icon,
-                size: new google.maps.Size(21,34),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(10, 34),
-                scaledSize: new google.maps.Size(21,34)
-            };
-
-            // Create a marker for each place.
-            markers.push(new google.maps.Marker({
-                map: map,
-                icon: icon,
-                title: place.name,
-                position: place.geometry.location
-            }));
-            console.log(place.name);
-
-            if (place.geometry.viewport) {
-                // Only geocodes have viewport.
-                bounds.union(place.geometry.viewport);
-            } else {
-                bounds.extend(place.geometry.location);
-            }
-        });
-        map.fitBounds(bounds);
-    });
-
-}
