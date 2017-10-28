@@ -70,9 +70,10 @@ function initMap() {
     });
 
     vm = new ViewModel();
+    initAutocomplete();
 
     ko.applyBindings(vm);
-};
+}
 
 function makeMarkerIcon(markerColor) {
     var markerImage = new google.maps.MarkerImage(
@@ -148,21 +149,21 @@ var ViewModel = function() {
         google.maps.event.trigger(attraction.marker, 'click');
         getData(attraction.marker);
         //test run for search using Autocomplete
-        initAutocomplete();
+        //initAutocomplete();
     };
-   
+
 
 };
 
 // Wikipedia API
 function getData(data) {
 
-    var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + data.title + '&format=json&callback=wikiCallback';   
+    var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + data.title + '&format=json&callback=wikiCallback';
     $.ajax({
         url: wikiUrl,
         dataType: "jsonp",
         success: function(response) {
-            console.log(response)
+            console.log(response);
             //console.log(response[2][0])
             var description = response[2][0];
             var contentString = '<p class="description">' + description + '</p>';
@@ -224,73 +225,77 @@ function getPlacesDetails(marker, infowindow, placeId) {
 // ref:  https://developers.google.com/maps/documentation/javascript/examples/places-searchbox
 
 function initAutocomplete() {
-        
-        var map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 40.7697, lng: -111.894402},
-          zoom: 16,
-          mapTypeId: 'roadmap'
-        });
-        
-        // Create the search box and link it to the UI element.
-        var input = document.getElementById('searchInput');
-        var searchBox = new google.maps.places.SearchBox(input);
-        //map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+/*
+    var map = new google.maps.Map(document.getElementById('map'), {
+        center: {
+            lat: 40.7697,
+            lng: -111.894402
+        },
+        zoom: 16,
+        mapTypeId: 'roadmap'
+    });
+*/
+    // Create the search box and link it to the UI element.
+    var input = document.getElementById('searchInput');
+    var searchBox = new google.maps.places.SearchBox(input);
+    //map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
-        // Bias the SearchBox results towards current map's viewport.
-        map.addListener('bounds_changed', function() {
-          searchBox.setBounds(map.getBounds());
-        });
+    // Bias the SearchBox results towards current map's viewport.
+    map.addListener('bounds_changed', function() {
+        searchBox.setBounds(map.getBounds());
+    });
 
-        var markers = [];
-        // Listen for the event fired when the user selects a prediction and retrieve
-        // more details for that place.
-        searchBox.addListener('places_changed', function() {
-          var places = searchBox.getPlaces();
+    var markers = [];
+    // Listen for the event fired when the user selects a prediction and retrieve
+    // more details for that place.
+    searchBox.addListener('places_changed', function() {
+        var places = searchBox.getPlaces();
 
-          if (places.length == 0) {
+        if (places.length == 0) {
             return;
-          }
+        }
 
-          // Clear out the old markers.
-          markers.forEach(function(marker) {
+        // Clear out the old markers.
+        markers.forEach(function(marker) {
             marker.setMap(null);
-          });
-          markers = [];
+        });
+        markers = [];
 
-          // For each place, get the icon, name and location.
-          var bounds = new google.maps.LatLngBounds();
-          places.forEach(function(place) {
+        // For each place, get the icon, name and location.
+        var bounds = new google.maps.LatLngBounds();
+        places.forEach(function(place) {
             if (!place.geometry) {
-              console.log("Returned place contains no geometry");
-              return;
+                console.log("Returned place contains no geometry");
+                return;
             }
-            
+
             //makeMarkerIcon(markerColor);
-            
+
             var icon = {
-              url: place.icon,
-              size: new google.maps.Size(71, 71),
-              origin: new google.maps.Point(0, 0),
-              anchor: new google.maps.Point(17, 34),
-              scaledSize: new google.maps.Size(25, 25)
+                url: place.icon,
+                size: new google.maps.Size(21,34),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(10, 34),
+                scaledSize: new google.maps.Size(21,34)
             };
-            
 
             // Create a marker for each place.
             markers.push(new google.maps.Marker({
-              map: map,
-              icon: icon,
-              title: place.name,
-              position: place.geometry.location
+                map: map,
+                icon: icon,
+                title: place.name,
+                position: place.geometry.location
             }));
+            console.log(place.name);
 
             if (place.geometry.viewport) {
-              // Only geocodes have viewport.
-              bounds.union(place.geometry.viewport);
+                // Only geocodes have viewport.
+                bounds.union(place.geometry.viewport);
             } else {
-              bounds.extend(place.geometry.location);
+                bounds.extend(place.geometry.location);
             }
-          });
-          map.fitBounds(bounds);
         });
-      }
+        map.fitBounds(bounds);
+    });
+
+}
