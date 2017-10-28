@@ -15,3 +15,4 @@ To run this project simply do the following:
 * You can click any of the tourist spots in the list or the markers to show information, do a search 
 
 This project is done in JavaScript using AJAX, KnockoutJs, Google Map API
+A big THANK YOU to my mentors for this project: Karol, Tamas Krasser, Greg Berger. For unselfishly sharing your knowledge and skills, for your patience, encouragement to continue learning.  
