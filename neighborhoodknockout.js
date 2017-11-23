@@ -54,9 +54,8 @@ var locations = [{
     }
 ];
 
-
-function initMap() {
-    map = new google.maps.Map(document.getElementById('map'), {
+function blankMap() {
+    return new google.maps.Map(document.getElementById('map'), {
         center: {
             lat: 40.7697,
             lng: -111.894402
@@ -64,6 +63,10 @@ function initMap() {
         zoom: 16,
         mapTypeControl: false
     });
+}
+
+function initMap() {
+    map = this.blankMap();
 
     infowindow = new google.maps.InfoWindow({
         content: "holding..."
@@ -87,7 +90,7 @@ function makeMarkerIcon(markerColor) {
 
 //  Location Constructor
 var TouristSpot = function(data) {
-    //console.log(data);
+    console.log('this data:', data);
 
     this.title = data.title;
 
@@ -130,72 +133,36 @@ var TouristSpot = function(data) {
 };
 
 var ViewModel = function() {
-
     var self = this;
-
     this.touristSpots = ko.observableArray();
     this.wikiData = ko.observable('');
-    
     this.query = ko.observable('');
-
     for (var i = 0; i < locations.length; i++) {
         this.touristSpots.push(new TouristSpot(locations[i]));
     }
-
-    // add the list view items' click event handler method there
-    // use the 'current item' aka first parameter to activate the corresponding map marker
-    // http://knockoutjs.com/documentation/click-binding.html#note-1-passing-a-current-item-as-a-parameter-to-your-handler-function
-
     this.placesList = function(attraction) {
-      //  console.log(attraction);
-      //  console.log(attraction.marker);
         google.maps.event.trigger(attraction.marker, 'click');
         toggleBounce(attraction.marker);
         getData(attraction.marker);
     };
 
-    // Filtering/Search
     this.searchList = ko.computed(function() {
-
         var query = self.query().toLowerCase()
         var filteredTouristSpots = []
         
         // remove all the current touristSpots, which removes them from the view
-
         for(var x in self.touristSpots()) {
             var touristSpot = self.touristSpots()[x];
+            var title = touristSpot.title.toLowerCase()
+            var match = title.toLowerCase().indexOf(query) >= 0;
+                
+            if(!match){
+                self.touristSpots.remove(touristSpot);
 
-           // if(self.touristSpots[x].title.toLowerCase().indexOf(value.toLowerCase()) >= 0){
-           //     self.touristSpots.push(self.touristSpots[x]);
-           // }
-
-            console.log(query, touristSpot)
-            // touristSpot.title 
-            // touristSpot.marker
-            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/indexOf
-            filteredTouristSpots.push(touristSpot) // push only matching touristSpots to filteredTouristSpots
+            }
         }
-
-        return filteredTouristSpots
     });
 };
-
-
-    /*
-    // Reference: http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
-    //filter the items using the filter text
-    this.filteredItems = ko.computed(function() {
-        var filter = this.filter().toLowerCase();
-            if (!filter) {
-            return this.items();
-        } else {
-            return ko.utils.arrayFilter(this.items(), function(item) {
-                return ko.utils.stringStartsWith(item.name().toLowerCase(), filter);
-            });
-        }
-    }, this);
-    */
-//};
 
 // Animate marker
 function toggleBounce(marker) {
