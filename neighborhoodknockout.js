@@ -143,14 +143,10 @@ var ViewModel = function() {
         getData(attraction.marker);
     };
 
-    // this.handleSearch = function(touristSpot) {
-    //     console.log(touristSpot);
-    // }
-
     // Filtering
     this.searchList = ko.computed(function() {
 
-        if(self.query() == '') {
+        if(self.query() === '') {
             return self.touristSpots();
         }
 
