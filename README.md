@@ -19,4 +19,4 @@ To run this project simply do the following:
 
 This project is done in JavaScript using AJAX, KnockoutJs, Google Map API.  
 
-A big THANK YOU to my mentors for this project: Karol Zyskowski, Tamas Krasser, Greg Berger. For unselfishly sharing your knowledge and skills, for your patience, encouragement to continue learning.  
+A big THANK YOU to my mentors for this project: Karol Zyskowski, Greg Berger, Tamas Krasser. For unselfishly sharing your knowledge and skills, for your patience, encouragement to continue learning.  
