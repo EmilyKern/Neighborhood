@@ -37,9 +37,9 @@ html,
       #map {
         bottom:0px;
         height: 100%;
-        left: 362px;
         position: absolute;
         right: 0px;
+        width: 65%;
       }
 
       .options-box {
@@ -50,7 +50,7 @@ html,
         line-height: 35px;
         padding: 10px 10px 30px 10px;
         text-align: left;
-        width: 340px;
+        width: 35%;
       }
 
       #pano {

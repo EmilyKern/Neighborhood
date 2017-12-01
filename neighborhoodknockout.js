@@ -93,6 +93,9 @@ var TouristSpot = function (data) {
     toggleBounce(marker);
     getPlacesDetails(marker, infowindow, placeId);
     getData(data);
+    setTimeout(function() {
+      toggleBounce(marker);
+    }, 2000);
   });
   // Style the markers a bit. This will be our listing marker icon.
   var defaultIcon = makeMarkerIcon('0091ff');
@@ -108,6 +111,7 @@ var TouristSpot = function (data) {
     this.setIcon(defaultIcon);
   });
 };
+
 var ViewModel = function () {
   var self = this;
   this.touristSpots = ko.observableArray();
@@ -118,25 +122,18 @@ var ViewModel = function () {
   }
   this.placesList = function (attraction) {
     google.maps.event.trigger(attraction.marker, 'click');
-    toggleBounce(attraction.marker);
-    getData(attraction.marker);
   };
+
   // Filtering
   this.searchList = ko.computed(function () {
-    if (self.query() === '') {
-      return self.touristSpots();
-    }
     return ko.utils.arrayFilter(self.touristSpots(), function (spot) {
-      if (spot.title.toLowerCase().indexOf(self.query().toLowerCase()) >= 0) {
-        spot.marker.setVisible(true);
-        return true;
-      } else {
-        spot.marker.setVisible(false);
-        return false;
-      }
-    });
+      var showTouristSpot = spot.title.toLowerCase().indexOf(self.query().toLowerCase()) >= 0 || self.query() === '';
+      spot.marker.setVisible(showTouristSpot);
+      return showTouristSpot;
+    })
   });
 };
+
 // Animate marker
 function toggleBounce(marker) {
   if (marker.getAnimation() !== null) {
@@ -145,21 +142,27 @@ function toggleBounce(marker) {
     marker.setAnimation(google.maps.Animation.BOUNCE);
   }
 }
+
 // Wikipedia API
 function getData(data) {
   var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + data.title + '&format=json&callback=wikiCallback';
-  $.ajax({
-    url: wikiUrl,
-    dataType: "jsonp",
-    success: function (response) {
-      //  console.log(response);
-      //console.log(response[2][0])
-      var description = response[2][0];
-      var contentString = '<p class="description">' + description + '</p>';
-      vm.wikiData(contentString);
-    }
-  });
+  //if(data.title >= 0){
+    $.ajax({
+      url: wikiUrl,
+      dataType: "jsonp",
+      success: function (response) {
+        //  console.log(response);
+        //console.log(response[2][0])
+       var description = response[2][0];
+       var contentString = '<p class="description">' + description + '</p>';
+       vm.wikiData(contentString);
+      }
+    });
+  //} else {
+  //   alert('Script Error: Unable to access Wiki info');
+  //   }
 }
+
 // This is the PLACE DETAILS search - it's the most detailed so it's only
 // executed when a marker is selected, indicating the user wants more
 // details about that place.
