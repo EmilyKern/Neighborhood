@@ -146,7 +146,8 @@ function toggleBounce(marker) {
 // Wikipedia API
 function getData(data) {
   var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + data.title + '&format=json&callback=wikiCallback';
-  //if(data.title >= 0){
+  
+  if (data.title > -1) {
     $.ajax({
       url: wikiUrl,
       dataType: "jsonp",
@@ -156,11 +157,16 @@ function getData(data) {
        var description = response[2][0];
        var contentString = '<p class="description">' + description + '</p>';
        vm.wikiData(contentString);
+      },
+      error: function (e) {
+        var wikiRequestTimeOut = setTimeout(function() {
+        alert( "Wiki API call failed!");
+        },3000); 
+        clearTimeout(wikiRequestTimeOut);
       }
     });
-  //} else {
-  //   alert('Script Error: Unable to access Wiki info');
-  //   }
+    // return false
+}
 }
 
 // This is the PLACE DETAILS search - it's the most detailed so it's only
